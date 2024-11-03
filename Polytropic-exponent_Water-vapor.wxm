@@ -1,0 +1,34 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 22.04.0 ] */
+/* [wxMaxima: input   start ] */
+/* Arden Buck Equation, Air expansion in Water Rocket, 
+pv: Saturation vapor pressure in bar
+p0=pressure difference in bar 
+T: Temperatur in degree Celsius */;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+kill(all); 
+T:20;
+p0:3;
+
+/* equation */
+
+pv:6.1121*10^(-3)*exp((18.678-T/234.5)*(T/(257.14+T))), numer;
+n:1.15+(1.4-1.15)*exp(-36*pv/p0), numer;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+/* Polytropic exponent as graphic */
+
+f:1.15+(1.4-1.15)*exp(-36*6.1121*10^(-3)*exp((18.678-x/234.5)*(x/(257.14+x)))/y);
+
+plot3d(f,[x,0,40],[y,0,25], [xlabel,"T in {^{o}}C"],[ylabel,"p_{0} in bar"], [zlabel,"n"]);
+/* [wxMaxima: input   end   ] */
+
+
+
+/* Old versions of Maxima abort on loading files that end in a comment. */
+"Created with wxMaxima 22.04.0"$
