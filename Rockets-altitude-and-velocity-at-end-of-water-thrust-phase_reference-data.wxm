@@ -44,7 +44,7 @@ mair:rhoair*(p0/pa)^(1/n)*V0;
 m:M+mair+rho*(Vb-V);
 A:%pi*r^2;
 AW:%pi*RW^2; 
-betaw:0.5*rhoair*cD*AW;
+D:0.5*rhoair*cD*AW;
 
 /* calculate burn of water thrust phase */
 
@@ -66,7 +66,7 @@ Runge Kutta approximation
 /* [wxMaxima: input   start ] */
 /* Water thrust phase including air drag, Runge Kutta algorithm */
 
-a:(2*A*(p0*V0^n*V^(-n)-pa)-betaw*v^2)/m-g;
+a:(2*A*(p0*V0^n*V^(-n)-pa)-D*v^2)/m-g;
 
 lsg:rk([dVdt, v, a], [V,y,v], [V0,0,0], [t,0,tb,0.01]);  
 
