@@ -113,13 +113,11 @@ Coast phase and maximum altitude
 
 /* [wxMaxima: input   start ] */
 /*
-tc = upwards flight time after burn phase 
 hc = additional altitude after burn phase 
 */
 
-psi:D/M;
-tc:sqrt(1/(psi*g))*atan(sqrt(psi/g)*vmax);
-hc:log((1+psi*vmax*tc)/(sqrt(1+psi*g*tc^2)))/psi;
+psi:D/M; 
+hc:log(1+psi*vmax^2/g)/(2*psi);
 
 /* Maximum altitude of the rocket */
 
@@ -145,8 +143,9 @@ vbr:romberg(aNo, t, 0,tb);
 hbr:vbr*tb/2; 
 vmaxr:sqrt(2*n*pa/(rhoair*(n-1))*((p0/pa)^(1-1/n)*(V0/Vb)^(n-1)-1))*log((M+eta*mair)/M)+vbr;
 
-tr:sqrt(1/(psi*g))*atan(sqrt(psi/g)*vmaxr);
-hcr:log((1+psi*vmaxr*tr)/(sqrt(1+psi*g*tr^2)))/psi;
+
+hcr:log(1+psi*vmaxr^2/g)/(2*psi);
+
 
 Hr:hbr+hcr, numer;
 /* [wxMaxima: input   end   ] */
