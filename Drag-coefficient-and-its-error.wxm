@@ -1,0 +1,224 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 22.04.0 ] */
+/* [wxMaxima: section start ]
+Calculation of the drag coefficient
+   [wxMaxima: section end   ] */
+
+
+/* [wxMaxima: input   start ] */
+/* Drag coefficient and its error 
+
+cD: drag coefficient
+L: length of rocket
+d: Diameter of rocket
+cf: skin friction
+tau: thickness to chord ration of fins
+N: number of fins
+CR: root chord of fin
+Acs: cross sectional area
+Aws: wetted area */
+
+kill(all);
+L:0.35; d:0.08;  
+cf:0.005;  Acs:%pi*(d/2)^2, numer;  Aws:0.1;   
+tau:0.08; Afin:0.0035; N:3; CR:0.075;
+Cl:1.02*cf*(1+3/(2*(L/d)^(3/2)))*(Aws/Acs);
+cD1:Cl+0.029/sqrt(Cl)+0.875*tau*N*(Afin+CR*d/2)/Acs+0.03, numer;
+
+/* Drag coefficient cD and its error  Delta_cD */
+cD:cD1*1.125;
+Delta_cD:cD1*0.125;
+
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: section start ]
+Fin thickness to chord ratio
+   [wxMaxima: section end   ] */
+
+
+/* [wxMaxima: input   start ] */
+kill(all);
+m2:(0.08-0.02)/(0.16-0.04); b2:0.02-m2*0.04; f2:m2*x+b2; 
+m3:0.035/0.04; f3(x):=m3*x; 
+plot2d([f3, f2],[x,0.03,0.136], [y,0,0.12],  [legend, "rectangular", "rounded"], [xlabel,"fin thickness to chord ratio"],[ylabel,"zero lift fin drag coefficient"]);
+
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: section start ]
+Wind tunnel experiment - drag coefficient
+   [wxMaxima: section end   ] */
+
+
+/* [wxMaxima: input   start ] */
+rho25:1.184;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+F:0.2; v:9.6; RW:0.04; cw1:2*F/(rho25*%pi*RW^2*v^2), numer;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+F:0.2; v:11.3; RW:0.04; cw2:2*F/(rho25*%pi*RW^2*v^2), numer;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+F:0.25; v:12.8; RW:0.04; cw3:2*F/(rho25*%pi*RW^2*v^2), numer;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+F:0.3; v:13.8; RW:0.04; cw4:2*F/(rho25*%pi*RW^2*v^2), numer;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+F:0.4; v:14.6; RW:0.04; cw5:2*F/(rho25*%pi*RW^2*v^2), numer;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+F:0.4; v:15.9; RW:0.04; cw6:2*F/(rho25*%pi*RW^2*v^2), numer;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+F:0.45; v:16.8; RW:0.04; cw7:2*F/(rho25*%pi*RW^2*v^2), numer;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+F:0.6; v:18.3; RW:0.04; cw8:2*F/(rho25*%pi*RW^2*v^2), numer;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+F:0.6; v:18.9; RW:0.04; cw9:2*F/(rho25*%pi*RW^2*v^2), numer;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+F:0.65; v:19.8; RW:0.04; cw10:2*F/(rho25*%pi*RW^2*v^2), numer;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+F:0.7; v:20; RW:0.04; cw11:2*F/(rho25*%pi*RW^2*v^2), numer;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+(cw1+cw2+cw3+cw4+cw5+cw6+cw7+cw8+cw9+cw10+cw11)/11;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+Rex:10^3; 0.027/Rex^(1/7), numer;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: subsect start ]
+Wind tunnel - error of drag coefficient
+   [wxMaxima: subsect end   ] */
+
+
+/* [wxMaxima: input   start ] */
+DelF:0.1; Delv:0.05;
+
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+F:0.2; v:9.2;
+cw1;
+cw1*(DelF/F+2*Delv/v);
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+F:0.2; v:11.3;
+cw2;
+cw2*(DelF/F+2*Delv/v);
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+F:0.25; v:12.8;
+cw3;
+cw3*(DelF/F+2*Delv/v);
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+F:0.3; v:13.8;
+cw4;
+cw4*(DelF/F+2*Delv/v);
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+F:0.4; v:14.6;
+cw5;
+cw5*(DelF/F+2*Delv/v);
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+F:0.4; v:15.9;
+cw6;
+cw6*(DelF/F+2*Delv/v);
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+F:0.45; v:16.8;
+cw7;
+cw7*(DelF/F+2*Delv/v);
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+F:0.6; v:18.3;
+cw8;
+cw8*(DelF/F+2*Delv/v);
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+F:0.6; v:18.9;
+cw9;
+cw9*(DelF/F+2*Delv/v);
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+F:0.65; v:19.8; 
+cw10;
+cw10*(DelF/F+2*Delv/v);
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+F:0.7; v:20;
+cw11;
+cw11*(DelF/F+2*Delv/v);
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+(0.7+5*0.5+5*0.6)/11;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+(0.4+0.3+0.2+0.2+0.2+0.1+0.1*5)/11;
+/* [wxMaxima: input   end   ] */
+
+
+
+/* Old versions of Maxima abort on loading files that end in a comment. */
+"Created with wxMaxima 22.04.0"$
