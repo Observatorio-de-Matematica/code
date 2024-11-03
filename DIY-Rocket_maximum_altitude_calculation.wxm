@@ -33,11 +33,11 @@ tb= burntime (water thrust)
 
 
 p0:3.5*10^5; pa:10^5;
-Vb:0.001; Vl:0.00035; V0:Vb-Vl; mu:2.5;
+Vb:0.001; Vl:0.00035; V0:Vb-Vl; mu:4;
 M:0.143;
 rho:1000; rhoair:1.23; 
  
-T:17;
+T:35;
 pv:611.21*exp((18.678-T/234.5)*(T/(257.14+T))), numer;
 n:1.15+(1.4-1.15)*exp(-36*pv/p0), numer;
 
