@@ -1,0 +1,127 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 22.04.0 ] */
+/* [wxMaxima: input   start ] */
+kill(all);
+/* 
+p0=initial pressure in N/m^2
+pa=atmos. pressure (1bar) in N/m^2
+Vb= bottle volume in m^3
+Vl=water volume in m^3
+(V0=Vb-Vl, air volume)
+M=curb mass rocket in kg
+rho=density of propellant (water 1000kg/m^3)
+rhoair=density of air at atmos. pressure at 15 C
+T=temperature
+pv: Saturation vapor pressure in N/m^2
+n= polytropic exponent
+mair= initial mass of compressed air 
+m= total mass of rocket and propellant 
+r=nozzle radius
+A=nozzle cross section area
+g=gravitational acceleration
+
+RW=radius of rocket in m
+AW=reference area rocket (here cross section area)
+cD: drag coefficient
+tb= burntime (water thrust)
+*/
+
+p0:3*10^5; pa:10^5; T:15;
+Vb:0.001; Vl:0.00035; V0:Vb-Vl; 
+M:1/8;
+rho:1000; rhoair:1.23; 
+r:0.0045;  
+RW:0.04;  
+g:9.81; 
+cD:1;
+
+/* calculate polytropic exponent */
+
+pv:611.21*exp((18.678-T/234.5)*(T/(257.14+T))), numer;
+n:1.15+(1.4-1.15)*exp(-36*pv/p0), numer;
+
+mair:rhoair*(p0/pa)^(1/n)*V0;
+m:M+mair+rho*(Vb-V);
+A:%pi*r^2;
+AW:%pi*RW^2; 
+betaw:0.5*rhoair*cD*AW;
+
+/* calculate burn of water thrust phase */
+
+dVdt:A*sqrt(2*(p0*V0^n*V^(-n)-pa)/rho);
+tb:romberg(1/dVdt,V,V0,Vb);
+
+
+
+
+
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: section start ]
+Runge Kutta approximation
+   [wxMaxima: section end   ] */
+
+
+/* [wxMaxima: input   start ] */
+/* Water thrust phase including air drag, Runge Kutta algorithm */
+
+a:(2*A*(p0*V0^n*V^(-n)-pa)-betaw*v^2)/m-g;
+
+lsg:rk([dVdt, v, a], [V,y,v], [V0,0,0], [t,0,tb,0.01]);  
+
+/* plot altitude depending on time, 
+
+in order to plot the rockets velocity change the next command line to:  polt2d([discrete,makelist([p[1],p[4]],p,lsg)], [xlabel,"time in s"],[ylabel,"velocity in m/s"]);
+ */
+
+plot2d ([discrete,makelist([p[1],p[3]],p,lsg)], [xlabel,"time in s"],[ylabel,"altitude in m"]);
+
+/* Altitude hb and velocity vb at the end of the water thrust phase */ 
+
+sliste:makelist(p[3],p,lsg); 
+vliste:makelist(p[4],p,lsg);  
+
+vb:lmax(vliste);
+hb:lmax(sliste);
+
+
+
+
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: section start ]
+Romberg approximation / zero drag coefficient
+   [wxMaxima: section end   ] */
+
+
+/* [wxMaxima: input   start ] */
+VNo:(Vb-V0)*t/tb+V0; 
+mNo:M+mair+rho*(Vb-VNo); 
+aNo:2*A*(p0*V0^n*VNo^(-n)-pa)/mNo-g;
+
+/* Estimation for altitude hbr and velocity vbr at the end of the water thrust phase */ 
+
+vbr:romberg(aNo, t, 0,tb);
+hbr:vbr*tb/2; 
+
+
+
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: subsect start ]
+Relative deviation from Runge Kutta results
+   [wxMaxima: subsect end   ] */
+
+
+/* [wxMaxima: input   start ] */
+(1-vbr/vb)*100;
+(1-hbr/hb)*100;
+/* [wxMaxima: input   end   ] */
+
+
+
+/* Old versions of Maxima abort on loading files that end in a comment. */
+"Created with wxMaxima 22.04.0"$
