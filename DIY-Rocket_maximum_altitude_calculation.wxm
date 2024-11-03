@@ -1,0 +1,163 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 22.04.0 ] */
+/* [wxMaxima: input   start ] */
+kill(all);
+/* Rockets altitude 
+
+
+p0=initial pressure in N/m^2
+pa=atmos. pressure (1bar) in N/m^2
+Vb= bottle volume in m^3
+Vl=water volume in m^3
+(V0=Vb-Vl, air volume)
+mu=exponent in eq. for efficiency factor of air thrust
+M=curb mass rocket in kg
+rho=density of propellant (water 1000kg/m^3)
+rhoair=density of air at atmos. pressure at 15 C
+T=temperature
+pv: Saturation vapor pressure in N/m^2
+n= polytropic exponent
+mair= initial mass of compressed air 
+m= total mass of rocket and propellant 
+r=nozzle radius
+A=nozzle cross section area
+g=gravitational acceleration
+
+RW=radius of rocket in m
+AW=reference area rocket (here cross section area)
+cD: drag coefficient
+tb= burntime (water thrust)
+
+*/
+
+
+
+p0:3.5*10^5; pa:10^5;
+Vb:0.001; Vl:0.00035; V0:Vb-Vl; mu:2.5;
+M:0.143;
+rho:1000; rhoair:1.23; 
+ 
+T:17;
+pv:611.21*exp((18.678-T/234.5)*(T/(257.14+T))), numer;
+n:1.15+(1.4-1.15)*exp(-36*pv/p0), numer;
+
+mair:rhoair*(p0/pa)^(1/n)*V0;
+m:M+mair+rho*(Vb-V);
+
+r:0.0045;  
+A:%pi*r^2;
+g:9.81; 
+
+RW:0.04;  
+AW:%pi*RW^2; 
+
+cD:0.6;
+D:0.5*rhoair*cD*AW;
+
+dVdt:A*sqrt(2*(p0*V0^n*V^(-n)-pa)/rho);
+tb:romberg(1/dVdt,V,V0,Vb);
+
+
+
+
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: title   start ]
+
+   [wxMaxima: title   end   ] */
+
+
+/* [wxMaxima: section start ]
+Water thrust phase - Runge Kutta approximation
+   [wxMaxima: section end   ] */
+
+
+/* [wxMaxima: input   start ] */
+a:(2*A*(p0*V0^n*V^(-n)-pa)-D*v^2)/m-g;
+
+lsg:rk([dVdt, v, a], [V,y,v], [V0,0,0], [t,0,tb,0.01]);  
+
+/*  Velocity vb and Altitude hb at the end of the water thrust phase */ 
+
+sliste:makelist(p[3],p,lsg); 
+vliste:makelist(p[4],p,lsg);  
+
+vb:lmax(vliste);
+hb:lmax(sliste);
+
+
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: subsect start ]
+Air thrust phase
+   [wxMaxima: subsect end   ] */
+
+
+/* [wxMaxima: input   start ] */
+/* eta = efficiency factor for air thrust */
+
+eta:(V0/Vb)^mu;
+
+vmax:sqrt(2*n*pa/(rhoair*(n-1))*((p0/pa)^(1-1/n)*(V0/Vb)^(n-1)-1))*log((M+eta*mair)/M)+vb;
+
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: subsect start ]
+Coast phase and maximum altitude
+
+   [wxMaxima: subsect end   ] */
+
+
+/* [wxMaxima: input   start ] */
+/*
+tc = upwards flight time after burn phase 
+hc = additional altitude after burn phase 
+*/
+
+psi:D/M;
+tc:sqrt(1/(psi*g))*atan(sqrt(psi/g)*vmax);
+hc:log((1+psi*vmax*tc)/(sqrt(1+psi*g*tc^2)))/psi;
+
+/* Maximum altitude of the rocket */
+
+H:hb+hc, numer; 
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: comment start ]
+
+   [wxMaxima: comment end   ] */
+
+
+/* [wxMaxima: section start ]
+Estimation for the maximum altitude of the rocket
+   [wxMaxima: section end   ] */
+
+
+/* [wxMaxima: input   start ] */
+VNo:(Vb-V0)*t/tb+V0; 
+mNo:M+mair+rho*(Vb-VNo); 
+aNo:2*A*(p0*V0^n*VNo^(-n)-pa)/mNo-g;
+vbr:romberg(aNo, t, 0,tb);
+hbr:vbr*tb/2; 
+vmaxr:sqrt(2*n*pa/(rhoair*(n-1))*((p0/pa)^(1-1/n)*(V0/Vb)^(n-1)-1))*log((M+eta*mair)/M)+vbr;
+
+tr:sqrt(1/(psi*g))*atan(sqrt(psi/g)*vmaxr);
+hcr:log((1+psi*vmaxr*tr)/(sqrt(1+psi*g*tr^2)))/psi;
+
+Hr:hbr+hcr, numer;
+/* [wxMaxima: input   end   ] */
+
+
+/* [wxMaxima: input   start ] */
+/* Compare the altitude of Runge Kutta approximation H and simple estimation Hr */
+H; Hr; 
+/* [wxMaxima: input   end   ] */
+
+
+
+/* Old versions of Maxima abort on loading files that end in a comment. */
+"Created with wxMaxima 22.04.0"$
