@@ -1,0 +1,41 @@
+/* [wxMaxima batch file version 1] [ DO NOT EDIT BY HAND! ]*/
+/* [ Created with wxMaxima version 22.04.0 ] */
+/* [wxMaxima: input   start ] */
+/* Volume to time connection
+
+p0=initial pressure in N/m^2
+pa=atmos. pressure (1bar) in N/m^2
+Vb= bottle volume in m^3
+Vl=water volume in m^3
+(V0=Vb-Vl, air volume)
+rho=density of propellant (water 1000kg/m^3)
+T=temperature
+pv: Saturation vapor pressure in N/m^2
+n= polytropic exponent
+r=nozzle radius
+A=nozzle cross section area
+tb= burntime (water thrust)
+*/
+
+kill(all);
+rho:1000; p0:10*10^5;  r:0.0045; Vb:0.001; Vl:0.00035; 
+V0:Vb-Vl;
+A:%pi*r^2;
+pa:10^5;
+T:15;
+p0bar:p0/10^5;
+pv:6.1121*10^(-3)*exp((18.678-T/234.5)*(T/(257.14+T))), numer;
+n:1.15+(1.4-1.15)*exp(-36*pv/p0bar), numer;
+
+/* Solving the differential equation */
+
+dVdt:A*sqrt(2*(p0*V0^n*V^(-n)-pa)/rho);  
+tb:romberg(1/dVdt, V, V0, Vb);
+Vlsg:rk(dVdt, V, V0, [t,0,tb,0.01]);   
+plot2d ([discrete,Vlsg],[xlabel,"t / s"],[ylabel,"V / m^3"] );
+/* [wxMaxima: input   end   ] */
+
+
+
+/* Old versions of Maxima abort on loading files that end in a comment. */
+"Created with wxMaxima 22.04.0"$
